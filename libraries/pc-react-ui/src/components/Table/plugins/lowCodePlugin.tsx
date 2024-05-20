@@ -10,6 +10,7 @@ export function useHandleRef(props) {
   const deletePropsList = props.get($deletePropsList, []).concat(['data-nodepath']);
   const nodePath = props.get('data-nodepath');
   React.useEffect(() => {
+    if (nodePath === undefined) return;
     const myTable = document.querySelector(`[data-node-id=${nodeId}]`)?.closest(`.${prefix}-table-wrapper`);
     myTable?.setAttribute('data-nodepath', nodePath);
   }, [nodeId]);

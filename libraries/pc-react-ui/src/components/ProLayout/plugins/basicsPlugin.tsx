@@ -67,7 +67,7 @@ export function useHandleSelectKey(props) {
   const onSelectProps = props.get('onSelect');
   const [selectedKeys, setSelectedKeys] = useControllableValue(_.filterUnderfinedValue({ value: selectedKeysProps, defaultValue: defaultOpenKeysProps, onChange: onSelectProps }));
   React.useEffect(() => {
-    const path = location?.pathname.split('/');
+    const path = location?.pathname.split('/')?.filter(Boolean);
     setSelectedKeys(path);
   }, [location?.pathname]);
   return {
@@ -85,7 +85,6 @@ export function useHandleMenuSlot(props) {
   const menuProps = props.get('menuProps');
   const menuSlot = React.Children.toArray(_.get(fragment, 'props.children', []));
   const handleLink = useHandleLink();
-  let timeer = null;
   function childToJson(children) {
     return React.Children.map(children, (child) => {
       if (child?.type === MenuItem) {
@@ -105,12 +104,7 @@ export function useHandleMenuSlot(props) {
               _.attempt(fn, arg);
               return;
             }
-            if (timeer) {
-              clearTimeout(timeer);
-            }
-            timeer = setTimeout(() => {
-              handleLink(arg.key, child.props?.target);
-            }, 150);
+            handleLink(arg.key, child.props?.target);
           }),
         };
       }
