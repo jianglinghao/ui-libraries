@@ -35,6 +35,9 @@ import CasesDemo31 from '../demos/cases/CasesDemo31.vue';
 import CasesDemo32 from '../demos/cases/CasesDemo32.vue';
 import CasesDemo33 from '../demos/cases/CasesDemo33.vue';
 import CasesDemo34 from '../demos/cases/CasesDemo34.vue';
+import MySelect from '../indexNew.vue';
+import RenderSelect from '../indexRender.vue';
+import '../plugin/indexRender.js';
 
 Vue.use(CloudUI);
 
@@ -56,9 +59,13 @@ export const Demo0 = {
   name: '基本用法',
   render: () => ({
     components: {
-      DeprecatedDemo: CasesDemo1,
+      MySelect,
     },
-    template: '<deprecated-demo />',
+    template: `
+      <div>
+        <my-select :dataSource="[{ value: 1, text: '2' }]"></my-select>
+      </div>
+    `,
   }),
 };
 
@@ -66,9 +73,9 @@ export const Demo1 = {
   name: 'appendTo:body',
   render: () => ({
     components: {
-      DeprecatedDemo: CasesDemo2,
+      DeprecatedDemo: RenderSelect,
     },
-    template: '<deprecated-demo />',
+    template: '<deprecated-demo :dataSource="[{ value: 1, text: \'2\' }]" />',
   }),
 };
 

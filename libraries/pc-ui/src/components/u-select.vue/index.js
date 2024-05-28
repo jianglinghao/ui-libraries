@@ -5,11 +5,11 @@ import USelectItem from './item.vue';
 import USelectItemAllCheck from './allCheck.vue';
 
 export {
-    USelect,
-    USelectDivider,
-    USelectGroup,
-    USelectItem,
-    USelectItemAllCheck,
+  USelect,
+  USelectDivider,
+  USelectGroup,
+  USelectItem,
+  USelectItemAllCheck,
 };
 
 export default USelect;
