@@ -1,6 +1,6 @@
 // Utils
 import { sync } from '@lcap/vue2-utils';
-import { createNamespace, _get } from '../utils';
+import { createNamespace, _get, isObject } from '../utils';
 import Picker from './Picker';
 import Popup from '../popup';
 import Field from '../field';
@@ -82,7 +82,6 @@ export default createComponent({
     pageable: { type: [Boolean, String], default: false },
     filterable: { type: Boolean, default: false },
     sorting: Object,
-    needAllRemoteData: { type: Boolean, default: true },
 
     isNew: {
       type: Boolean,
@@ -96,6 +95,9 @@ export default createComponent({
       // 内部值
       currentValue: this.formatValue((this.value ?? this.pvalue) || ''),
       style: '',
+
+      // 当前选中的值对应的数据
+      currentSelected: [],
     };
   },
   mounted() {
@@ -108,8 +110,7 @@ export default createComponent({
   },
   watch: {
     currentValue(val) {
-      this.$emit('update:value', val);
-      this.$emit('update:pvalue', val);
+      this.updateSelected(val);
     },
     // 监听props变化
     value(val) {
@@ -172,41 +173,64 @@ export default createComponent({
       }
       return val;
     },
+    async updateSelected(value) {
+      // 遍历data
+      const iterateData = (data, callback) => {
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i];
+          let v, t;
+          if (isObject(item)) {
+            v = _get(item, this.valueField);
+            t = _get(item, this.textField);
+          } else {
+            v = item;
+            t = item;
+          }
+          callback({ value: v, text: t });
+        }
+      };
+
+      let selected = [];
+      const dataMap = {};
+      const data = this.currentDataSource?.data || [];
+
+      iterateData(data, (item) => {
+        dataMap[item.value] = item;
+      })
+
+      let val = Array.isArray(value) ? value : [value];
+      let filterValue = [];
+      for (let i = 0; i < val.length; i++) {
+        const v = val[i];
+        if (dataMap[v]) {
+          selected.push(dataMap[v]);
+        } else {
+          filterValue.push(v);
+        }
+      }
+
+      if (this.currentDataSource) {
+        const res = await this.currentDataSource._load({ filterValue });
+        if (Array.isArray(res)) {
+          iterateData(res, (item) => {
+            selected.push(item);
+          })
+
+        } else if (isObject(res)) {
+          iterateData(res.data || [], (item) => {
+            selected.push(item);
+          })
+        }
+      }
+
+      this.currentSelected = selected;
+    },
     getTitle() {
       if (this.inDesigner()) {
         return this.value ?? this.pvalue;
       }
 
-      let title = this.multiple ? [] : '';
-      for (let i = 0; i < this.allRemoteData.length; i++) {
-        const item = this.allRemoteData[i];
-
-        let v;
-        let t;
-        if (typeof item === 'object' && item !== null) {
-          v = _get(item, this.valueField);
-          t = _get(item, this.textField);
-        } else {
-          v = item;
-          t = item;
-        }
-
-        if (this.multiple) {
-          if ((this.currentValue || []).includes(v)) {
-            title.push(t);
-          }
-        } else if (this.currentValue === v) {
-          title = t;
-          break;
-        }
-      }
-
-      title = this.multiple ? title.join('，') : title;
-      const defaultTitle = this.multiple
-        ? (this.currentValue || []).join('，')
-        : this.currentValue;
-
-      return title || defaultTitle;
+      return this.currentSelected.map((item) => item.text).join('，');
     },
     togglePopup() {
       this.popupVisible = !this.popupVisible;
@@ -258,9 +282,9 @@ export default createComponent({
       this.currentValue = value;
       this.closePopup();
 
-      this.$nextTick(() => {
-        this.$emit('confirm', value, index);
-      });
+      this.$emit('update:value', value);
+      this.$emit('update:pvalue', value);
+      this.$emit('confirm', value, index);
     },
     onCancel() {
       this.$emit('cancel');
