@@ -109,8 +109,17 @@ export default createComponent({
     },
   },
   watch: {
-    currentValue(val) {
-      this.updateSelected(val);
+    currentValue: {
+      handler(val) {
+        this.updateSelected(val);
+      },
+      immediate: true,
+    },
+    dataSource: {
+      handler() {
+        this.updateSelected(this.currentValue);
+      },
+      immediate: false,
     },
     // 监听props变化
     value(val) {
@@ -209,17 +218,16 @@ export default createComponent({
         }
       }
 
-      if (this.currentDataSource) {
-        const res = await this.currentDataSource._load({ filterValue });
+      if (typeof this.dataSource === 'function') {
+        const res = await this.dataSource({ filterValue });
         if (Array.isArray(res)) {
           iterateData(res, (item) => {
             selected.push(item);
-          })
-
+          });
         } else if (isObject(res)) {
-          iterateData(res.data || [], (item) => {
+          iterateData(res.list || [], (item) => {
             selected.push(item);
-          })
+          });
         }
       }
 
