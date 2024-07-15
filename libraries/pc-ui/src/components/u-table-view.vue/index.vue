@@ -2184,10 +2184,13 @@ export default {
                     this.currentDataSource.arrangedData = originalList;
                 } else {
                     // 普通表格的处理
-                    originalList.splice(this.dragState.sourcePath, 1);
-                    originalList.splice(this.dragState.targetPath, 0, this.dragState.source);
+                    let targetPath = this.dropData.position === 'insertBefore'? this.dragState.targetPath : this.dragState.targetPath + 1;
+                    originalList.splice(targetPath, 0, this.dragState.source);
+                    let sourcePath = this.dragState.sourcePath < this.dragState.targetPath ? this.dragState.sourcePath : this.dragState.sourcePath + 1;
+                    sourcePath = sourcePath > originalList.length - 1 ? originalList.length - 1 : sourcePath;
+                    originalList.splice(sourcePath, 1);
                     this.currentDataSource.arrangedData = originalList;
-                    targetPath = this.dragState.targetPath;
+                    targetPath = originalList.findIndex((item) => item === this.dragState.source);
                     dropList = originalList;
                 }
                 const level = targetParentItem ? (targetParentItem.tableTreeItemLevel || 0) + 1 : 0;
@@ -2202,7 +2205,7 @@ export default {
                     target: this.dragState.targetData,
                     position: this.dropData.position,
                     finalSource,
-                    updateData: {
+                    updateData: { // updateData指的是更新的数据，两个都是需要更新的数据
                         sourceList: this.removeData && this.removeData.parentList || originalList,
                         targetList: dropList,
                     },
