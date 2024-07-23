@@ -5,6 +5,7 @@ import ExamplesDemo1 from '../demos/examples/ExamplesDemo1.vue';
 // import ExamplesDemo2 from '../demos/examples/ExamplesDemo2.vue';
 // import ExamplesDemo3 from '../demos/examples/ExamplesDemo3.vue';
 // import ExamplesDemo4 from '../demos/examples/ExamplesDemo4.vue';
+import ExamplesDemo5 from '../demos/examples/ExamplesDemo5.vue';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {
@@ -55,3 +56,12 @@ export const Demo0 = {
 //     template: '<deprecated-demo />',
 //   }),
 // };
+
+export const 动态行 = {
+  render: () => ({
+    components: {
+      DeprecatedDemo: ExamplesDemo5,
+    },
+    template: '<deprecated-demo />',
+  }),
+};

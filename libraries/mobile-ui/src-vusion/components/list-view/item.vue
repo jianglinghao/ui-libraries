@@ -1,5 +1,6 @@
 <template>
   <div :class="[$style.root]"
+      :style="getStyle()"
       :selected="parentVM.selectable ? (parentVM.multiple ? currentSelected : isSelected) : false"
       :readonly="parentVM.readonly" :readonly-mode="parentVM.readonlyMode"
       :disabled="disabled || parentVM.disabled"
@@ -27,6 +28,7 @@
 <script>
 import UListViewItem from 'cloud-ui.vusion/src/components/u-list-view.vue/item.vue';
 import Iconv from '../../../src/iconv';
+import { isFunction } from '../../../src/utils';
 
 export default {
     name: 'van-list-view-item',
@@ -36,13 +38,33 @@ export default {
       Iconv
     },
     extends: UListViewItem,
+    props: {
+      setRowStyle: { type: Function },
+      item: { tyepe: Object },
+      index: { type: Number },
+      value: { type: String }
+    },
     methods: {
       onTap(e) {
         if (this.parentVM && this.parentVM.selectable) {
           this.select(e)
         }
+      },
+      getStyle() {
+        return isFunction(this.setRowStyle) ? this.setRowStyle({ item: this.item, index: this.index, value: this.value }) : {};
+      },
+      setCellColor() {
+        const styles = this.getStyle();
+        if(styles) {
+          const cellNode = this.$el.querySelector('.van-cell')
+          if (cellNode)
+            cellNode.style.color = styles['color']
+        }
       }
-    }
+    },
+    updated() {
+      this.setCellColor()
+    },
 }
 </script>
 

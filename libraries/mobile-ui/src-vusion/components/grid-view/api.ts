@@ -271,6 +271,28 @@ namespace nasl.ui {
       }
     })
     col: nasl.core.Integer = 2;
+
+    @Prop({
+      group: '样式属性',
+      title: '网格项动态样式',
+      description: '动态设置网格项背景色、字体颜色等样式',
+      docDescription: '动态设置网格项背景色、字体颜色等样式',
+      bindOpen: true,
+      setter: {
+          concept: 'AnonymousFunctionSetter',
+      }
+    })
+    setRowStyle: (current: Current<T>) => { 
+      /**
+       * @title 列表行背景颜色
+       */
+      backgroundColor: nasl.core.String, 
+      /**
+       * @title 列表行字体颜色
+       */
+      color: nasl.core.String 
+    };
+
     @Prop({
       group: '状态属性',
       title: '只读',

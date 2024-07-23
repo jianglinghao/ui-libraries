@@ -83,6 +83,7 @@
               :ref="'item'+i"
               :class="[$style.opitem, $style.item, !iffall ? $style.floatitem : '', $style[moveMode], styleArr[i] && styleArr[i].showClass && $style[styleArr[i].showClass]]"
               vusion-slot-name="item"
+              :setRowStyle="setRowStyle"
               >
               <slot
                 v-if="iffall && slots('item')"
@@ -95,6 +96,7 @@
                 :value="$at(item, valueField)"
                 :disabled="item.disabled || disabled"
                 vusion-slot-name="item"
+                :setRowStyle="setRowStyle"
                 >{{ $at(item, field || textField) }}
               </slot>
               <slot
@@ -107,6 +109,7 @@
                 :value="$at(item, valueField)"
                 :disabled="item.disabled || disabled"
                 vusion-slot-name="item"
+                :setRowStyle="setRowStyle"
                 >{{ $at(item, field || textField) }}
               </slot>
               <van-empty-col v-if="(!slots('item')) && $env.VUE_APP_DESIGNER"></van-empty-col>
@@ -271,6 +274,7 @@ export default {
       type: Number,
       default: 0.4,
     },
+    setRowStyle: { type: Function }
   },
   data() {
     return {

@@ -35,8 +35,9 @@
                     :disabled="item.disabled || disabled"
                     :item="item"
                     :index="index"
+                    :setRowStyle="setRowStyle"
                     vusion-slot-name="item">
-                    <slot name="item" :item="item" :index="index" :text="$at(item, field || textField)" :value="$at(item, valueField)" :disabled="item.disabled || disabled">{{ $at(item, field || textField) }}
+                    <slot name="item" :item="item" :index="index" :text="$at(item, field || textField)" :value="$at(item, valueField)" :disabled="item.disabled || disabled" :setRowStyle="setRowStyle">{{ $at(item, field || textField) }}
                         <van-empty-col v-if="(!$slots.item) && $env.VUE_APP_DESIGNER"></van-empty-col>
                     </slot>
                 </component>
@@ -159,6 +160,7 @@ export default {
         },
         selectedIcon: String,
         unselectedIcon: String,
+        setRowStyle: { type: Function }
     },
     data() {
       return {
